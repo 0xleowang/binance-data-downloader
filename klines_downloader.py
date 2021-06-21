@@ -28,13 +28,17 @@ def download_kline(symbol, klines_type, interval):
         klines_enum = HistoricalKlinesType.SPOT
     elif klines_type == 'futures':
         klines_enum = HistoricalKlinesType.FUTURES
-    klines = client.get_historical_klines(
-        symbol=symbol,
-        klines_type=klines_enum,
-        interval=interval,
-        start_str=START_TIME,
-        limit=1000
-    )
+    try:
+        klines = client.get_historical_klines(
+            symbol=symbol,
+            klines_type=klines_enum,
+            interval=interval,
+            start_str=START_TIME,
+            limit=1000
+        )
+    except Exception:
+        print(f'No {klines_type} data for {symbol}')
+        return
     # write into csv
     with open(f'./data/{klines_type}/{interval}/{symbol}.csv', 'w', newline='') as f:
         writer = csv.writer(f)
